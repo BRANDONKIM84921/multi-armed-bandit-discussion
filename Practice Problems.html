@@ -3327,8 +3327,13 @@ window.Quarto = {
 <li>For the last two strategies, we determined that the best metric to determine how good a machine was is using the mean. What are some issues with this?</li>
 </ol>
 <p>The UCB1 strategy tries to mitigate the issues with using the mean. This is done by instead using an <strong>upper confidence bound</strong>, or UCB. This is calculated like so:</p>
-<p><span class="math display">\[ a(t) = \hat{\mu_i} + \sqrt{\frac{2\ln{t}}{n_i}}\]</span></p>
-<p>Where - <span class="math inline">\(\hat{\mu}\)</span> is the estimate of the mean of the arm <span class="math inline">\(i\)</span> - <span class="math inline">\(\n_i\)</span> is the number of times we rolled from arm <span class="math inline">\(i\)</span> - <span class="math inline">\(t\)</span> is the total number of rolls altogether</p>
+<p><span class="math display">\[ UCB = \hat{\mu_i} + \sqrt{\frac{2\ln{t}}{n_i}}\]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(\hat{\mu}\)</span> is the estimate of the mean of the arm <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(n_i\)</span> is the number of times we rolled from arm <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(t\)</span> is the total number of rolls altogether</li>
+</ul>
 <p>Since UCB also takes into account of number of attempts, it essentially captures how well a machine COULD do. This encapsulates variance in a way that is desirable to optimizing yield, so it effectively covers both exploration AND exploitation simultaneously. Therefore, using this strategy, we could pretty much just roll from whichever arm has the highest UCB.</p>
 <ol start="2" type="1">
 <li><p>Using this strategy, try doing 20 rolls. Just like Epsilon Greedy, it’s best to initialize each machine first by doing 1 roll for each of them. How many tokens did we win?</p></li>

@@ -56,17 +56,17 @@ Suppose instead, you do NOT know the distributions of the winnings of each machi
 
 1.  Off the top of your head, what do you think is the most optimal strategy to make the most amount of money?
 
-This type of problem is known as a **Multi-Armed Bandit Problem**. Problems in which a gambler (or some person) must choose between multiple "arms," or options, that could yield varying results at an unknown distribution. This type of problem is commonly seen in finance, machine learning or just everyday life. 
+This type of problem is known as a **Multi-Armed Bandit Problem**. Problems in which a gambler (or some person) must choose between multiple "arms," or options, that could yield varying results at an unknown distribution. This type of problem is commonly seen in finance, machine learning or just everyday life.
 
 Because of its frequent appearances in many fields, this problem has been thoroughly researched and theorized, leading to numerous strategies that could hopefully optimize yield. Here is a [link](https://b7iuz3-brandon-kim.shinyapps.io/Multi-Armed-Bandit-Simulation/) to a simulator to use to try implementing some of the most popular strategies.
 
-## Part 3. Strategies 
+## Part 3. Strategies
 
-Most strategies involve two phases: Exploration and Exploitation. 
+Most strategies involve two phases: Exploration and Exploitation.
 
-- Exploration is the process of trying out different arms to gather more information about their reward distributions. This helps in understanding which arm might be the best.
+-   Exploration is the process of trying out different arms to gather more information about their reward distributions. This helps in understanding which arm might be the best.
 
-- Exploitation is the process of choosing the arm that currently has the highest estimated reward based on past experiences. This aims to maximize immediate rewards.
+-   Exploitation is the process of choosing the arm that currently has the highest estimated reward based on past experiences. This aims to maximize immediate rewards.
 
 It's important to note that the time for exploration and the time for exploitation are inversely related. Meaning that the more time we spend exploring, the less time we spend exploiting. Because of this, some strategies try to blend the exploration and exploitation phase efficiently such that both can be done simultaneously.
 
@@ -74,61 +74,62 @@ It's important to note that the time for exploration and the time for exploitati
 
 The most brute force strategy is by splitting the exploration and exploitation phases explicitly. What if we set a proportion $p$ of rolls at the beginning to see which machine is the best? And from there, we just spam that machine as we deemed it as our best from our exploration? Let's try it out!
 
-1. Using this strategy, try doing 20 rolls. With $p = 0.3$ of those rolls being used for initial exploration. How many tokens did we win? 
+1.  Using this strategy, try doing 20 rolls. With $p = 0.3$ of those rolls being used for initial exploration. How many tokens did we win?
 
-2. Which machine seems to be the best?
+2.  Which machine seems to be the best?
 
-3. What do you think are some issues with this strategy?  
+3.  What do you think are some issues with this strategy?
 
 ### Epsilon Greedy
 
 Having exploration being all the beginning is a little clunky. So what if we mixed them together? The Epsilon Greedy method tries to solve this:
 
-- Instead of having a proportion at the beginning, what if we selected whether a roll would explore or exploit at a probability $\epsilon$. 
-  - With probability $\epsilon$, we would explore by picking a random arm and roll from it. 
-  - With probability $1 - \epsilon$, we would exploit the best arm, by only rolling from it. 
-  
-Since our exploitation phase only comprises of using the "best" arm, this strategy is "greedy". 
-  
-1. Using this strategy, try doing 20 rolls with $\epsilon = 0.25$. How many tokens did we win? (In case you have to exploit first, start by "initializing" each machine by doing 1 roll for each of them before everything)
+-   Instead of having a proportion at the beginning, what if we selected whether a roll would explore or exploit at a probability $\epsilon$.
+    -   With probability $\epsilon$, we would explore by picking a random arm and roll from it.
+    -   With probability $1 - \epsilon$, we would exploit the best arm, by only rolling from it.
 
-2. Which machine seems to be the best?
+Since our exploitation phase only comprises of using the "best" arm, this strategy is "greedy".
 
-3. What do you think are some issues with this strategy? 
+1.  Using this strategy, try doing 20 rolls with $\epsilon = 0.25$. How many tokens did we win? (In case you have to exploit first, start by "initializing" each machine by doing 1 roll for each of them before everything)
 
-4. What if we altered what $\epsilon$ throughout the whole process (i.e. $\epsilon = 0.25$ for the first 10 rolls, and $\epsilon = 0.05$ for the last 10 rolls). What are some pros and cons to this alteration? (This strategy is known as **Decaying Epsilon Greedy**)
+2.  Which machine seems to be the best?
+
+3.  What do you think are some issues with this strategy?
+
+4.  What if we altered what $\epsilon$ throughout the whole process (i.e. $\epsilon = 0.25$ for the first 10 rolls, and $\epsilon = 0.05$ for the last 10 rolls). What are some pros and cons to this alteration? (This strategy is known as **Decaying Epsilon Greedy**)
 
 ### UCB1
 
-1. For the last two strategies, we determined that the best metric to determine how good a machine was is using the mean. What are some issues with this? 
+1.  For the last two strategies, we determined that the best metric to determine how good a machine was is using the mean. What are some issues with this?
 
 The UCB1 strategy tries to mitigate the issues with using the mean. This is done by instead using an **upper confidence bound**, or UCB. This is calculated like so:
 
-$$ a(t) = \hat{\mu_i} + \sqrt{\frac{2\ln{t}}{n_i}}$$
+$$ UCB = \hat{\mu_i} + \sqrt{\frac{2\ln{t}}{n_i}}$$
 
-Where
-- $\hat{\mu}$ is the estimate of the mean of the arm $i$
-- $\n_i$ is the number of times we rolled from arm $i$
-- $t$ is the total number of rolls altogether
+Where:
 
-Since UCB also takes into account of number of attempts, it essentially captures how well a machine COULD do. This encapsulates variance in a way that is desirable to optimizing yield, so it effectively covers both exploration AND exploitation simultaneously. Therefore, using this strategy, we could pretty much just roll from whichever arm has the highest UCB. 
+-   $\hat{\mu}$ is the estimate of the mean of the arm $i$
+-   $n_i$ is the number of times we rolled from arm $i$
+-   $t$ is the total number of rolls altogether
 
-2. Using this strategy, try doing 20 rolls. Just like Epsilon Greedy, it's best to initialize each machine first by doing 1 roll for each of them. How many tokens did we win?
+Since UCB also takes into account of number of attempts, it essentially captures how well a machine COULD do. This encapsulates variance in a way that is desirable to optimizing yield, so it effectively covers both exploration AND exploitation simultaneously. Therefore, using this strategy, we could pretty much just roll from whichever arm has the highest UCB.
 
-3. Which machine seems to be the best?
+2.  Using this strategy, try doing 20 rolls. Just like Epsilon Greedy, it's best to initialize each machine first by doing 1 roll for each of them. How many tokens did we win?
 
-4. What do you think are some issues with this strategy? 
+3.  Which machine seems to be the best?
+
+4.  What do you think are some issues with this strategy?
 
 ### Thompson Sampling
 
 Suppose we took a Bayesian approach...
 
-For this situation, let's limit our scope from optimizing our yield to instead be just making a profit (any profit would be good). This way, we could use a beta-binomial conjugate. 
+For this situation, let's limit our scope from optimizing our yield to instead be just making a profit (any profit would be good). This way, we could use a beta-binomial conjugate.
 
 ## Part 4. Discussion
 
-1. What if the distributions of the winnings for each machine wasn't constant? As in, they can vary over time? Which strategies would be more robust to this?
+1.  What if the distributions of the winnings for each machine wasn't constant? As in, they can vary over time? Which strategies would be more robust to this?
 
-2. Instead of optimizing our yield, what if we reduced our goal to just seeing which machine was the best? Which strategies did the best at that? 
+2.  Instead of optimizing our yield, what if we reduced our goal to just seeing which machine was the best? Which strategies did the best at that?
 
-3. Can you name some applications of situations like this that we see in real life?
+3.  Can you name some applications of situations like this that we see in real life?
