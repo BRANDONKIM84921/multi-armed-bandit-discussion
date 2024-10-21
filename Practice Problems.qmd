@@ -136,13 +136,17 @@ As a reminder, a beta distribution has 2 parameters $Beta(\alpha, \beta)$, where
 
 - Repeat the first two steps for a certain amount of times.
 
-1. Suppose you heard that machine 3 has a lot worse payout than machine 1 or machine 2. What would your prior distributions be for each machine? (Don't use $Beta(0, 0)$ as it is an invalid PDF)
+1. As stated before, we're aggregating the results of each machine to either a success or a failure. Since the machines were rolling values from 0-5, what values would we deem as a success or a failure (if the idea was that we would want to at least make a profit from using these machines)?
 
-2. Using this strategy, try doing 20 rolls. How many tokens did we win?
+2. Pretend that you have 0 knowledge about the machines. What would be a fair prior distribution be for each machine? (It's not $Beta(0, 0)$ as that's an invalid PDF)
 
-3. Which machine seems to be the best? (Would we determine the best machine differently for this strategy?)
+3. Now pretend that you heard that machine 3 has a lot worse payout than machine 1 or machine 2. What would your prior distributions be for each machine? 
 
-4.  What do you think are some issues with this strategy?
+4. Using the Thompson Sampling strategy, try doing 20 rolls. How many tokens did we win?
+
+5. Which machine seems to be the best? (Would we determine the best machine differently for this strategy?)
+
+6.  What do you think are some issues with this strategy?
 
 ## Part 4. Discussion
 
@@ -150,4 +154,6 @@ As a reminder, a beta distribution has 2 parameters $Beta(\alpha, \beta)$, where
 
 2.  Instead of optimizing our yield, what if we reduced our goal to just seeing which machine was the best? Which strategies did the best at that?
 
-3.  Can you name some applications of situations like this that we see in real life?
+3.  Which strategy was the most "efficient" (defined loosely)?
+
+4.  Can you name some applications of situations like this that we see in real life?

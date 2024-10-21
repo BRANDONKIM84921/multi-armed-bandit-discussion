@@ -3295,8 +3295,8 @@ window.Quarto = {
 <li><p>Exploitation is the process of choosing the arm that currently has the highest estimated reward based on past experiences. This aims to maximize immediate rewards.</p></li>
 </ul>
 <p>It’s important to note that the time for exploration and the time for exploitation are inversely related. Meaning that the more time we spend exploring, the less time we spend exploiting. Because of this, some strategies try to blend the exploration and exploitation phase efficiently such that both can be done simultaneously.</p>
-<section id="epsilon-first-strategy" class="level3">
-<h3 class="anchored" data-anchor-id="epsilon-first-strategy">Epsilon First Strategy</h3>
+<section id="epsilon-first" class="level3">
+<h3 class="anchored" data-anchor-id="epsilon-first">Epsilon First</h3>
 <p>The most brute force strategy is by splitting the exploration and exploitation phases explicitly. What if we set a proportion <span class="math inline">\(p\)</span> of rolls at the beginning to see which machine is the best? And from there, we just spam that machine as we deemed it as our best from our exploration? Let’s try it out!</p>
 <ol type="1">
 <li><p>Using this strategy, try doing 20 rolls. With <span class="math inline">\(p = 0.3\)</span> of those rolls being used for initial exploration. How many tokens did we win?</p></li>
@@ -3319,7 +3319,7 @@ window.Quarto = {
 <li><p>Using this strategy, try doing 20 rolls with <span class="math inline">\(\epsilon = 0.25\)</span>. How many tokens did we win? (In case you have to exploit first, start by “initializing” each machine by doing 1 roll for each of them before everything)</p></li>
 <li><p>Which machine seems to be the best?</p></li>
 <li><p>What do you think are some issues with this strategy?</p></li>
-<li><p>What if we altered what <span class="math inline">\(\epsilon\)</span> throughout the whole process (i.e. <span class="math inline">\(\epsilon = 0.25\)</span> for the first 10 rolls, and <span class="math inline">\(\epsilon = 0.05\)</span> for the last 10 rolls). What are some pros and cons to this alteration? (This strategy is known as <strong>Decaying Epsilon Greedy</strong>)</p></li>
+<li><p>What if we altered what <span class="math inline">\(\epsilon\)</span> throughout the whole process (e.g. <span class="math inline">\(\epsilon = 0.25\)</span> for the first 10 rolls, and <span class="math inline">\(\epsilon = 0.05\)</span> for the last 10 rolls). What are some pros and cons to this alteration? (This strategy is known as <strong>Decaying Epsilon Greedy</strong>)</p></li>
 </ol>
 </section>
 <section id="ucb1" class="level3">
@@ -3344,8 +3344,22 @@ window.Quarto = {
 </section>
 <section id="thompson-sampling" class="level3">
 <h3 class="anchored" data-anchor-id="thompson-sampling">Thompson Sampling</h3>
-<p>Suppose we took a Bayesian approach…</p>
-<p>For this situation, let’s limit our scope from optimizing our yield to instead be just making a profit (any profit would be good). This way, we could use a beta-binomial conjugate.</p>
+<p>Suppose we took a Bayesian approach.</p>
+<p>For this situation, let’s limit our scope from optimizing our yield to instead be just making a profit (any profit would be good). This way, we could use a <strong>beta-binomial</strong> conjugate pair For those of you guys who haven’t taken STAT 415, a beta-binomial conjugate refers to the idea that we have beta distributions as prior subjective beliefs for binomial processes.</p>
+<p>As a reminder, a beta distribution has 2 parameters <span class="math inline">\(Beta(\alpha, \beta)\)</span>, where <span class="math inline">\(\alpha\)</span> represents the number of successes and <span class="math inline">\(\beta\)</span> represents the number of failures. So after choosing a subjective prior belief, our sampling process goes as follows:</p>
+<ul>
+<li><p>Choose a machine to roll from by simulating values from the beta prior distributions and see which simulated value is the largest.</p></li>
+<li><p>Update <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> on that machine’s prior distribution depending on whether we observe a success or failure on a roll from that machine. (i.e. if we saw a success, then <span class="math inline">\(\alpha_{new} = \alpha_{old} + 1\)</span>. Else, <span class="math inline">\(\beta_{new} = \beta_{old} + 1\)</span>)</p></li>
+<li><p>Repeat the first two steps for a certain amount of times.</p></li>
+</ul>
+<ol type="1">
+<li><p>As stated before, we’re aggregating the results of each machine to either a success or a failure. Since the machines were rolling values from 0-5, what values would we deem as a success or a failure (if the idea was that we would want to at least make a profit from using these machines)?</p></li>
+<li><p>Pretend that you have 0 knowledge about the machines. What would be a fair prior distribution be for each machine? (It’s not <span class="math inline">\(Beta(0, 0)\)</span> as that’s an invalid PDF)</p></li>
+<li><p>Now pretend that you heard that machine 3 has a lot worse payout than machine 1 or machine 2. What would your prior distributions be for each machine?</p></li>
+<li><p>Using the Thompson Sampling strategy, try doing 20 rolls. How many tokens did we win?</p></li>
+<li><p>Which machine seems to be the best? (Would we determine the best machine differently for this strategy?)</p></li>
+<li><p>What do you think are some issues with this strategy?</p></li>
+</ol>
 </section>
 </section>
 <section id="part-4.-discussion" class="level2">
@@ -3353,6 +3367,7 @@ window.Quarto = {
 <ol type="1">
 <li><p>What if the distributions of the winnings for each machine wasn’t constant? As in, they can vary over time? Which strategies would be more robust to this?</p></li>
 <li><p>Instead of optimizing our yield, what if we reduced our goal to just seeing which machine was the best? Which strategies did the best at that?</p></li>
+<li><p>Which strategy was the most “efficient” (defined loosely)?</p></li>
 <li><p>Can you name some applications of situations like this that we see in real life?</p></li>
 </ol>
 </section>
