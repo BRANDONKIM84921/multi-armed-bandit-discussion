@@ -72,7 +72,7 @@ Most strategies involve two phases: Exploration and Exploitation.
 
 It's important to note that the time for exploration and the time for exploitation are inversely related. Meaning that the more time we spend exploring, the less time we spend exploiting. Because of this, some strategies try to blend the exploration and exploitation phase efficiently such that both can be done simultaneously.
 
-### Epsilon First 
+### Epsilon First
 
 The most brute force strategy is by splitting the exploration and exploitation phases explicitly. What if we set a proportion $p$ of rolls at the beginning to see which machine is the best? And from there, we just spam that machine as we deemed it as our best from our exploration? Let's try it out!
 
@@ -126,25 +126,25 @@ Since UCB also takes into account of number of attempts, it essentially captures
 
 Suppose we took a Bayesian approach.
 
-For this situation, let's limit our scope from optimizing our yield to instead be just making a profit (any profit would be good). This way, we could use a **beta-binomial** conjugate pair For those of you guys who haven't taken STAT 415, a beta-binomial conjugate refers to the idea that we have beta distributions as prior subjective beliefs for binomial processes. 
+For this situation, let's limit our scope from optimizing our yield to instead be just making a profit (any profit would be good). This way, we could use a **beta-binomial** conjugate pair For those of you guys who haven't taken STAT 415, a beta-binomial conjugate refers to the idea that we have beta distributions as prior subjective beliefs for binomial processes.
 
 As a reminder, a beta distribution has 2 parameters $Beta(\alpha, \beta)$, where $\alpha$ represents the number of successes and $\beta$ represents the number of failures. So after choosing a subjective prior belief, our sampling process goes as follows:
 
-- Choose a machine to roll from by simulating values from the beta prior distributions and see which simulated value is the largest. 
+-   Choose a machine to roll from by simulating values from the beta prior distributions and see which simulated value is the largest.
 
-- Update $\alpha$ and $\beta$ on that machine's prior distribution depending on whether we observe a success or failure on a roll from that machine. (i.e. if we saw a success, then $\alpha_{new} = \alpha_{old} + 1$. Else, $\beta_{new} = \beta_{old} + 1$)
+-   Update $\alpha$ and $\beta$ on that machine's prior distribution depending on whether we observe a success or failure on a roll from that machine. (i.e. if we saw a success, then $\alpha_{new} = \alpha_{old} + 1$. Else, $\beta_{new} = \beta_{old} + 1$)
 
-- Repeat the first two steps for a certain amount of times.
+-   Repeat the first two steps for a certain amount of times.
 
-1. As stated before, we're aggregating the results of each machine to either a success or a failure. Since the machines were rolling values from 0-5, what values would we deem as a success or a failure (if the idea was that we would want to at least make a profit from using these machines)?
+1.  As stated before, we're aggregating the results of each machine to either a success or a failure. Since the machines were rolling values from 0-5, what values would we deem as a success or a failure (if the idea was that we would want to at least make a profit from using these machines)?
 
-2. Pretend that you have 0 knowledge about the machines. What would be a fair prior distribution be for each machine? (It's not $Beta(0, 0)$ as that's an invalid PDF)
+2.  Pretend that you have 0 knowledge about the machines. What would be a fair prior distribution be for each machine? (It's not $Beta(0, 0)$ as that's an invalid PDF)
 
-3. Now pretend that you heard that machine 3 has a lot worse payout than machine 1 or machine 2. What would your prior distributions be for each machine? 
+3.  Now pretend that you heard that machine 3 has a lot worse payout than machine 1 or machine 2. What would your prior distributions be for each machine?
 
-4. Using the Thompson Sampling strategy, try doing 20 rolls. How many tokens did we win?
+4.  Using the Thompson Sampling strategy, try doing 20 rolls. How many tokens did we win?
 
-5. Which machine seems to be the best? (Would we determine the best machine differently for this strategy?)
+5.  Which machine seems to be the best? (Would we determine the best machine differently for this strategy?)
 
 6.  What do you think are some issues with this strategy?
 

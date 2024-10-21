@@ -5,7 +5,7 @@ account: b7iuz3-brandon-kim
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 13072936
-bundleId: 9248540
+bundleId: 9251903
 url: https://b7iuz3-brandon-kim.shinyapps.io/Multi-Armed-Bandit-Simulation/
 version: 1
 asMultiple: FALSE

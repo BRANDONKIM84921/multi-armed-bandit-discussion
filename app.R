@@ -12,7 +12,37 @@ machine3 <- data.frame(outcomes = 0:5,
 
 ucb <- function(vec, total) mean(vec) + sqrt((2*log(length(vec)))/length(total))
 
-set.seed(sum(utf8ToInt("590")))
+numchk <- function(str) !grepl("\\D", str) & str != ""
+
+totalplt <- function(vec) {
+  
+  ggplot(data.frame(t = vec), aes(x = t)) +
+    geom_histogram(binwidth = 1, color = "black", fill = "#8DD3C7") +
+    scale_x_continuous(limits = c(-1, 6), breaks = seq(0, 5, by = 1)) +
+    scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
+    labs(x = "Total Outputs", 
+         title = "Total Results Histogram", 
+         subtitle =  paste0("Mean: ", round(mean(vec), 2), ", ", "SD: ", round(sd(vec), 2), ", Total: ", sum(vec), ", Most Recent: ", tail(vec, 1))
+         ) + 
+    theme_bw()
+  
+}
+
+indplt <- function(vec, total_vec, col, xaxis, title) {
+  
+  ggplot(data.frame(m = vec), aes(x = m)) +
+    geom_histogram(binwidth = 1, color = "black", fill = col) +
+    geom_vline(xintercept = ucb(vec, total_vec), color = "red", linetype = "dashed", size = 1) + 
+    annotate("text", x = ucb(vec, total_vec) + 0.2, y = 0.1, label = "UCB", color = "red") +
+    scale_x_continuous(limits = c(-1, 6), breaks = seq(0, 5, by = 1)) +
+    scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
+    labs(x = xaxis, 
+         title = title, 
+         subtitle =  paste0("Mean: ", round(mean(vec), 2), ", SD: ", round(sd(vec), 2), ", UCB: ", round(ucb(vec, total_vec), 2), " , Count: ", length(vec), ", Most Recent: ", tail(vec, 1))
+         ) + 
+    theme_bw()
+  
+}
 
 ui <- fluidPage(
   
@@ -96,14 +126,7 @@ server <- function(input, output) {
     output$totalhist <- renderPlot({
       req(length(obj$tc) != 0)
       
-      ggplot(data.frame(t = obj$tc), aes(x = t)) +
-        geom_histogram(binwidth = 1, color = "black", fill = "#8DD3C7") +
-        scale_x_continuous(limits = c(-1, 6), breaks = seq(0, 5, by = 1)) +
-        scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
-        labs(x = "Total Outputs", 
-             title = "Total Results Histogram", 
-             subtitle =  paste0("Mean: ", round(mean(obj$tc), 2), ", ", "SD: ", round(sd(obj$tc), 2), ", Total: ", sum(obj$tc), ", Most Recent: ", tail(obj$tc, 1))) + 
-        theme_bw()
+      totalplt(obj$tc)
     })
     
     obj$c1 <- c(obj$c1, newval)
@@ -111,20 +134,12 @@ server <- function(input, output) {
     output$m1hist <- renderPlot({
       req(length(obj$c1) != 0)
       
-      ggplot(data.frame(m1 = obj$c1), aes(x = m1)) +
-        geom_histogram(binwidth = 1, color = "black", fill = "#FFFFB3") +
-        geom_vline(xintercept = ucb(obj$c1, obj$tc), color = "red", linetype = "dashed", size = 1) + 
-        annotate("text", x = ucb(obj$c1, obj$tc) + 0.2, y = 0.1, label = "UCB", color = "red") +
-        scale_x_continuous(limits = c(-1, 6), breaks = seq(0, 5, by = 1)) +
-        scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
-        labs(x = "Machine 1 Outputs", 
-             title = "Machine 1 Results Histogram", 
-             subtitle =  paste0("Mean: ", round(mean(obj$c1), 2), ", SD: ", round(sd(obj$c1), 2), ", UCB: ", round(ucb(obj$c1, obj$tc), 2), " , Count: ", length(obj$c1), ", Most Recent: ", tail(obj$c1, 1))) + 
-        theme_bw()
+      indplt(obj$c1, obj$tc, "#FFFFb3", "Machine 1 Outputs", "Machine 1 Results Histogram")
     })
     
     output$uses <-  renderText({
       req(length(obj$tc) != 0)
+      
       paste("Total Number of Rolls:", length(obj$tc))
     })
     
@@ -139,14 +154,7 @@ server <- function(input, output) {
     output$totalhist <- renderPlot({
       req(length(obj$tc) != 0)
       
-      ggplot(data.frame(t = obj$tc), aes(x = t)) +
-        geom_histogram(binwidth = 1, color = "black", fill = "#8DD3C7") +
-        scale_x_continuous(limits = c(-1, 6), breaks = seq(0, 5, by = 1)) +
-        scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
-        labs(x = "Total Outputs", 
-             title = "Total Results Histogram", 
-             subtitle =  paste0("Mean: ", round(mean(obj$tc), 2), ", ", "SD: ", round(sd(obj$tc), 2), ", Total: ", sum(obj$tc), ", Most Recent: ", tail(obj$tc, 1))) + 
-        theme_bw()
+      totalplt(obj$tc)
     })
   
     
@@ -155,20 +163,12 @@ server <- function(input, output) {
     output$m2hist <- renderPlot({
       req(length(obj$c2) != 0)
       
-      ggplot(data.frame(m2 = obj$c2), aes(x = m2)) +
-        geom_histogram(binwidth = 1, color = "black", fill = "#BEBADA") +
-        geom_vline(xintercept = ucb(obj$c2, obj$tc), color = "red", linetype = "dashed", size = 1) + 
-        annotate("text", x = ucb(obj$c2, obj$tc) + 0.2, y = 0.1, label = "UCB", color = "red") +
-        scale_x_continuous(limits = c(-1, 6), breaks = seq(0, 5, by = 1)) +
-        scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
-        labs(x = "Machine 2 Outputs", 
-             title = "Machine 2 Results Histogram", 
-             subtitle =  paste0("Mean: ", round(mean(obj$c2), 2), ", SD: ", round(sd(obj$c2), 2), ", UCB: ", round(ucb(obj$c2, obj$tc), 2), " , Count: ", length(obj$c2), ", Most Recent: ", tail(obj$c2, 1))) + 
-        theme_bw()
+      indplt(obj$c2, obj$tc, "#BEBADA", "Machine 2 Outputs", "Machine 2 Results Histogram")
     })
     
     output$uses <-  renderText({
       req(length(obj$tc) != 0)
+      
       paste("Total Number of Rolls:", length(obj$tc))
     })
     
@@ -183,14 +183,7 @@ server <- function(input, output) {
     output$totalhist <- renderPlot({
       req(length(obj$tc) != 0)
       
-      ggplot(data.frame(t = obj$tc), aes(x = t)) +
-        geom_histogram(binwidth = 1, color = "black", fill = "#8DD3C7") +
-        scale_x_continuous(limits = c(-1, 6), breaks = seq(0, 5, by = 1)) +
-        scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
-        labs(x = "Total Outputs", 
-             title = "Total Results Histogram", 
-             subtitle =  paste0("Mean: ", round(mean(obj$tc), 2), ", ", "SD: ", round(sd(obj$tc), 2), ", Total: ", sum(obj$tc), ", Most Recent: ", tail(obj$tc, 1))) + 
-        theme_bw()
+      totalplt(obj$tc)
     })
     
     
@@ -199,20 +192,12 @@ server <- function(input, output) {
     output$m3hist <- renderPlot({
       req(length(obj$c3) != 0)
       
-      ggplot(data = data.frame(m3 = obj$c3), aes(x = m3)) +
-        geom_histogram(binwidth = 1, color = "black", fill = "#80B1D3") +
-        geom_vline(xintercept = ucb(obj$c3, obj$tc), color = "red", linetype = "dashed", size = 1) + 
-        annotate("text", x = ucb(obj$c3, obj$tc) + 0.2, y = 0.1, label = "UCB", color = "red") +
-        scale_x_continuous(limits = c(-1, 6), breaks = seq(0, 5, by = 1)) +
-        scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
-        labs(x = "Machine 3 Outputs", 
-             title = "Machine 3 Results Histogram", 
-             subtitle =  paste0("Mean: ", round(mean(obj$c3), 2), ", SD: ", round(sd(obj$c3), 2), ", UCB: ", round(ucb(obj$c3, obj$tc), 2), " , Count: ", length(obj$c3), ", Most Recent: ", tail(obj$c3, 1))) + 
-        theme_bw()
+      indplt(obj$c3, obj$tc, "#80B1D3", "Machine 3 Outputs", "Machine 3 Results Histogram")
     })
     
     output$uses <-  renderText({
       req(length(obj$tc) != 0)
+      
       paste("Total Number of Rolls:", length(obj$tc))
       })
     
@@ -225,6 +210,8 @@ server <- function(input, output) {
     obj$c2 <- c()
     obj$c3 <- c()
     
+    set.seed(sum(utf8ToInt(input$seed)))
+    
   })
   
   observeEvent(input$sim, {
@@ -233,13 +220,17 @@ server <- function(input, output) {
   })
   
   observeEvent(input$sim_ts, {
+    
+    req(numchk(input$a1) & numchk(input$b1) & numchk(input$a2) &
+        numchk(input$b2) & numchk(input$a3) & numchk(input$b3))
+    
     m1val <- rbeta(1, as.numeric(input$a1), as.numeric(input$b1)) 
     m2val <- rbeta(1, as.numeric(input$a2), as.numeric(input$b2)) 
     m3val <- rbeta(1, as.numeric(input$a3), as.numeric(input$b3)) 
     
     if (m1val > m2val & m1val > m3val) output$ev <- renderText("Choose Machine 1")
     else if (m2val > m1val & m2val > m3val) output$ev <- renderText("Choose Machine 2")
-    else if (m3val > m1val & m3val > m2val) output$ev <- renderText("Choose Machine 3")
+    else output$ev <- renderText("Choose Machine 3")
   })
 
 }
