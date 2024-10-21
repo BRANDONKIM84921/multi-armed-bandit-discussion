@@ -8,7 +8,7 @@ machine2 <- data.frame(outcomes = 0:5,
                        probs = c(0.3, 0.1, 0, 0.3, 0.3, 0))
 
 machine3 <- data.frame(outcomes = 0:5,
-                       probs = c(0.1, 0.3, 0.2, 0.1, 0, 0.1))
+                       probs = c(0.1, 0.3, 0.35, 0.1, 0.05, 0.1))
 
 ucb <- function(vec, total) mean(vec) + sqrt((2*log(length(vec)))/length(total))
 
@@ -114,8 +114,6 @@ server <- function(input, output) {
   observe(set.seed(sum(utf8ToInt(input$seed))))
   
   obj <- reactiveValues(tc = c(), c1 = c(), c2 = c(), c3 = c())
-  
-  res <- reactiveVal(TRUE)
   
   observeEvent(input$m1, {
     
