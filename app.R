@@ -38,7 +38,7 @@ indplt <- function(vec, total_vec, col, xaxis, title) {
     scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
     labs(x = xaxis, 
          title = title, 
-         subtitle =  paste0("Mean: ", round(mean(vec), 2), ", SD: ", round(sd(vec), 2), ", UCB: ", round(ucb(vec, total_vec), 2), " , Count: ", length(vec), ", Most Recent: ", tail(vec, 1))
+         subtitle =  paste0("Mean: ", round(mean(vec), 2), ", SD: ", round(sd(vec), 2), ", UCB: ", round(ucb(vec, total_vec), 2), ", Count: ", length(vec), ", Most Recent: ", tail(vec, 1))
          ) + 
     theme_bw()
   
