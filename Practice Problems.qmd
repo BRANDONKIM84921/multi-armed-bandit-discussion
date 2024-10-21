@@ -60,6 +60,8 @@ This type of problem is known as a **Multi-Armed Bandit Problem**. Problems in w
 
 Because of its frequent appearances in many fields, this problem has been thoroughly researched and theorized, leading to numerous strategies that could hopefully optimize yield. Here is a [link](https://b7iuz3-brandon-kim.shinyapps.io/Multi-Armed-Bandit-Simulation/) to a simulator to use to try implementing some of the most popular strategies.
 
+*If it's too laggy, try downloading app.r from this [github repository](https://github.com/BRANDONKIM84921/multi-armed-bandit-discussion) and run the app locally using Rstudio*
+
 ## Part 3. Strategies
 
 Most strategies involve two phases: Exploration and Exploitation.
@@ -70,7 +72,7 @@ Most strategies involve two phases: Exploration and Exploitation.
 
 It's important to note that the time for exploration and the time for exploitation are inversely related. Meaning that the more time we spend exploring, the less time we spend exploiting. Because of this, some strategies try to blend the exploration and exploitation phase efficiently such that both can be done simultaneously.
 
-### Epsilon First Strategy
+### Epsilon First 
 
 The most brute force strategy is by splitting the exploration and exploitation phases explicitly. What if we set a proportion $p$ of rolls at the beginning to see which machine is the best? And from there, we just spam that machine as we deemed it as our best from our exploration? Let's try it out!
 
@@ -96,7 +98,7 @@ Since our exploitation phase only comprises of using the "best" arm, this strate
 
 3.  What do you think are some issues with this strategy?
 
-4.  What if we altered what $\epsilon$ throughout the whole process (i.e. $\epsilon = 0.25$ for the first 10 rolls, and $\epsilon = 0.05$ for the last 10 rolls). What are some pros and cons to this alteration? (This strategy is known as **Decaying Epsilon Greedy**)
+4.  What if we altered what $\epsilon$ throughout the whole process (e.g. $\epsilon = 0.25$ for the first 10 rolls, and $\epsilon = 0.05$ for the last 10 rolls). What are some pros and cons to this alteration? (This strategy is known as **Decaying Epsilon Greedy**)
 
 ### UCB1
 
@@ -122,9 +124,25 @@ Since UCB also takes into account of number of attempts, it essentially captures
 
 ### Thompson Sampling
 
-Suppose we took a Bayesian approach...
+Suppose we took a Bayesian approach.
 
-For this situation, let's limit our scope from optimizing our yield to instead be just making a profit (any profit would be good). This way, we could use a beta-binomial conjugate.
+For this situation, let's limit our scope from optimizing our yield to instead be just making a profit (any profit would be good). This way, we could use a **beta-binomial** conjugate pair For those of you guys who haven't taken STAT 415, a beta-binomial conjugate refers to the idea that we have beta distributions as prior subjective beliefs for binomial processes. 
+
+As a reminder, a beta distribution has 2 parameters $Beta(\alpha, \beta)$, where $\alpha$ represents the number of successes and $\beta$ represents the number of failures. So after choosing a subjective prior belief, our sampling process goes as follows:
+
+- Choose a machine to roll from by simulating values from the beta prior distributions and see which simulated value is the largest. 
+
+- Update $\alpha$ and $\beta$ on that machine's prior distribution depending on whether we observe a success or failure on a roll from that machine. (i.e. if we saw a success, then $\alpha_{new} = \alpha_{old} + 1$. Else, $\beta_{new} = \beta_{old} + 1$)
+
+- Repeat the first two steps for a certain amount of times.
+
+1. Suppose you heard that machine 3 has a lot worse payout than machine 1 or machine 2. What would your prior distributions be for each machine? (Don't use $Beta(0, 0)$ as it is an invalid PDF)
+
+2. Using this strategy, try doing 20 rolls. How many tokens did we win?
+
+3. Which machine seems to be the best? (Would we determine the best machine differently for this strategy?)
+
+4.  What do you think are some issues with this strategy?
 
 ## Part 4. Discussion
 

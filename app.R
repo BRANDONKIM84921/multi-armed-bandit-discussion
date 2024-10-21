@@ -50,12 +50,31 @@ ui <- fluidPage(
     fluidRow(
       column(3,
         wellPanel(
-          h4("Epsilon Greedy Exploration vs. Exploitation Selecter"),
+          h4("Epsilon Greedy Exploration vs. Exploitation Machine Selecter"),
           sliderInput("gprob", "Greedy Probability", min = 0, max = 1, value = 0.3, step = 0.01),
           actionButton("sim", "Simulate"),
           textOutput("outcome")
           )
-        )
+        ),
+      
+      column(9, 
+             wellPanel(
+               h4("Thompson Sampling Machine Selecter (Beta Binomial)"),
+               fluidRow(
+                 column(4, textInput("a1", "Machine 1 Alpha:")),
+                 column(4, textInput("b1", "Machine 1 Beta:"))
+               ),
+               fluidRow(
+                 column(4, textInput("a2", "Machine 2 Alpha:")),
+                 column(4, textInput("b2", "Machine 2 Beta:"))
+               ),
+               fluidRow(
+                 column(4, textInput("a3", "Machine 3 Alpha:")),
+                 column(4, textInput("b3", "Machine 3 Beta:"))
+               ),
+               actionButton("sim_ts", "Simulate"),
+               textOutput("ev")
+             ))
 
     )
 )
@@ -83,7 +102,7 @@ server <- function(input, output) {
         scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
         labs(x = "Total Outputs", 
              title = "Total Results Histogram", 
-             subtitle =  paste0("Mean: ", round(mean(obj$tc), 2), ", ", "SD: ", round(sd(obj$tc), 2), ", Total: ", sum(obj$tc))) + 
+             subtitle =  paste0("Mean: ", round(mean(obj$tc), 2), ", ", "SD: ", round(sd(obj$tc), 2), ", Total: ", sum(obj$tc), ", Most Recent: ", tail(obj$tc, 1))) + 
         theme_bw()
     })
     
@@ -100,7 +119,7 @@ server <- function(input, output) {
         scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
         labs(x = "Machine 1 Outputs", 
              title = "Machine 1 Results Histogram", 
-             subtitle =  paste0("Mean: ", round(mean(obj$c1), 2), ", SD: ", round(sd(obj$c1), 2), ", UCB: ", round(ucb(obj$c1, obj$tc), 2), " , Count: ", length(obj$c1))) + 
+             subtitle =  paste0("Mean: ", round(mean(obj$c1), 2), ", SD: ", round(sd(obj$c1), 2), ", UCB: ", round(ucb(obj$c1, obj$tc), 2), " , Count: ", length(obj$c1), ", Most Recent: ", tail(obj$c1, 1))) + 
         theme_bw()
     })
     
@@ -126,7 +145,7 @@ server <- function(input, output) {
         scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
         labs(x = "Total Outputs", 
              title = "Total Results Histogram", 
-             subtitle =  paste0("Mean: ", round(mean(obj$tc), 2), ", ", "SD: ", round(sd(obj$tc), 2), ", Total: ", sum(obj$tc))) + 
+             subtitle =  paste0("Mean: ", round(mean(obj$tc), 2), ", ", "SD: ", round(sd(obj$tc), 2), ", Total: ", sum(obj$tc), ", Most Recent: ", tail(obj$tc, 1))) + 
         theme_bw()
     })
   
@@ -144,7 +163,7 @@ server <- function(input, output) {
         scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
         labs(x = "Machine 2 Outputs", 
              title = "Machine 2 Results Histogram", 
-             subtitle =  paste0("Mean: ", round(mean(obj$c2), 2), ", SD: ", round(sd(obj$c2), 2), ", UCB: ", round(ucb(obj$c2, obj$tc), 2), " , Count: ", length(obj$c2))) + 
+             subtitle =  paste0("Mean: ", round(mean(obj$c2), 2), ", SD: ", round(sd(obj$c2), 2), ", UCB: ", round(ucb(obj$c2, obj$tc), 2), " , Count: ", length(obj$c2), ", Most Recent: ", tail(obj$c2, 1))) + 
         theme_bw()
     })
     
@@ -170,7 +189,7 @@ server <- function(input, output) {
         scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
         labs(x = "Total Outputs", 
              title = "Total Results Histogram", 
-             subtitle =  paste0("Mean: ", round(mean(obj$tc), 2), ", ", "SD: ", round(sd(obj$tc), 2), ", Total: ", sum(obj$tc))) + 
+             subtitle =  paste0("Mean: ", round(mean(obj$tc), 2), ", ", "SD: ", round(sd(obj$tc), 2), ", Total: ", sum(obj$tc), ", Most Recent: ", tail(obj$tc, 1))) + 
         theme_bw()
     })
     
@@ -188,7 +207,7 @@ server <- function(input, output) {
         scale_y_continuous(breaks = seq(0, 100, by = 1)) + 
         labs(x = "Machine 3 Outputs", 
              title = "Machine 3 Results Histogram", 
-             subtitle =  paste0("Mean: ", round(mean(obj$c3), 2), ", SD: ", round(sd(obj$c3), 2), ", UCB: ", round(ucb(obj$c3, obj$tc), 2), " , Count: ", length(obj$c3))) + 
+             subtitle =  paste0("Mean: ", round(mean(obj$c3), 2), ", SD: ", round(sd(obj$c3), 2), ", UCB: ", round(ucb(obj$c3, obj$tc), 2), " , Count: ", length(obj$c3), ", Most Recent: ", tail(obj$c3, 1))) + 
         theme_bw()
     })
     
@@ -211,6 +230,16 @@ server <- function(input, output) {
   observeEvent(input$sim, {
     output$outcome <- renderText(ifelse(input$gprob < runif(1), paste("Explore by picking:", sample(c("Machine 1", "Machine 2", "Machine 3"), 1)), "Exploit"))
 
+  })
+  
+  observeEvent(input$sim_ts, {
+    m1val <- rbeta(1, as.numeric(input$a1), as.numeric(input$b1)) 
+    m2val <- rbeta(1, as.numeric(input$a2), as.numeric(input$b2)) 
+    m3val <- rbeta(1, as.numeric(input$a3), as.numeric(input$b3)) 
+    
+    if (m1val > m2val & m1val > m3val) output$ev <- renderText("Choose Machine 1")
+    else if (m2val > m1val & m2val > m3val) output$ev <- renderText("Choose Machine 2")
+    else if (m3val > m1val & m3val > m2val) output$ev <- renderText("Choose Machine 3")
   })
 
 }
