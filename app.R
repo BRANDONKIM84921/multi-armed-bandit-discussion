@@ -219,16 +219,23 @@ server <- function(input, output) {
   
   observeEvent(input$sim_ts, {
     
-    req(numchk(input$a1) & numchk(input$b1) & numchk(input$a2) &
-        numchk(input$b2) & numchk(input$a3) & numchk(input$b3))
+    if (!(numchk(input$a1) & numchk(input$b1) & numchk(input$a2) & numchk(input$b2) & numchk(input$a3) & numchk(input$b3))) output$ev <- renderText("Please put numbers in ALL entries")
     
-    m1val <- rbeta(1, as.numeric(input$a1), as.numeric(input$b1)) 
-    m2val <- rbeta(1, as.numeric(input$a2), as.numeric(input$b2)) 
-    m3val <- rbeta(1, as.numeric(input$a3), as.numeric(input$b3)) 
+    else {
     
-    if (m1val > m2val & m1val > m3val) output$ev <- renderText("Choose Machine 1")
-    else if (m2val > m1val & m2val > m3val) output$ev <- renderText("Choose Machine 2")
-    else output$ev <- renderText("Choose Machine 3")
+      m1val <- rbeta(1, as.numeric(input$a1), as.numeric(input$b1)) 
+      m2val <- rbeta(1, as.numeric(input$a2), as.numeric(input$b2)) 
+      m3val <- rbeta(1, as.numeric(input$a3), as.numeric(input$b3)) 
+      
+      machineoutputs <- paste0("Machine 1 Simulated Value: ", round(m1val, 3),
+                               ", Machine 2 Simulated Value: ", round(m2val, 3),
+                               ", Machine 3 Simulated Value: ",  round(m3val, 3))
+      
+      if (m1val > m2val & m1val > m3val) output$ev <- renderText(paste(machineoutputs, "; Therefore, Choose Machine 1"))
+      else if (m2val > m1val & m2val > m3val) output$ev <- renderText(paste(machineoutputs, "; Therefore, Choose Machine 2"))
+      else output$ev <- renderText(paste(machineoutputs, "; Therefore, Choose Machine 3"))
+    
+    }
   })
 
 }
