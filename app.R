@@ -213,7 +213,7 @@ server <- function(input, output) {
   })
   
   observeEvent(input$sim, {
-    output$outcome <- renderText(ifelse(input$gprob < runif(1), paste("Explore by picking:", sample(c("Machine 1", "Machine 2", "Machine 3"), 1)), "Exploit"))
+    output$outcome <- renderText(ifelse(runif(1) < input$gprob, paste("Explore by picking:", sample(c("Machine 1", "Machine 2", "Machine 3"), 1)), "Exploit"))
 
   })
   

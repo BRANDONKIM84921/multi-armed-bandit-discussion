@@ -9,6 +9,8 @@ editor: visual
 ```{r}
 #| message: FALSE
 #| echo: FALSE
+#| warning: FALSE
+#| 
 library(kableExtra) 
 library(tidyverse)
 library(htmltools)
@@ -116,7 +118,7 @@ Where:
 
 Since UCB also takes into account of number of attempts, it essentially captures how well a machine COULD do. This encapsulates variance in a way that is desirable to optimizing yield, so it effectively covers both exploration AND exploitation simultaneously. Therefore, using this strategy, we could pretty much just roll from whichever arm has the highest UCB.
 
-2.  Using this strategy, try doing 20 rolls. Just like Epsilon Greedy, it's best to initialize each machine first by doing 1 roll for each of them. How many tokens did we win?
+2.  Using this strategy, try doing 20 rolls. Just like Epsilon Greedy, it's best to initialize each machine first by doing a couple rolls for each of them. How many tokens did we win?
 
 3.  Which machine seems to be the best?
 
